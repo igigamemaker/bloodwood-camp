@@ -56,7 +56,7 @@ function updateMouseWorld(){const n=new THREE.Vector3(mouse.x/innerWidth*2-1,-mo
 function pixelTexture(pattern,palette){const s=pattern.length,c=document.createElement('canvas');c.width=c.height=s;const ctx=c.getContext('2d');pattern.forEach((r,y)=>[...r].forEach((ch,x)=>{if(palette[ch]){ctx.fillStyle=palette[ch];ctx.fillRect(x,y,1,1)}}));const t=new THREE.CanvasTexture(c);t.magFilter=THREE.NearestFilter;t.minFilter=THREE.NearestFilter;return t}
 const textures={
 hero:pixelTexture(['......m.........','.....mmm........','....mmmmm.......','...mmMmmM......s','..mmmMMMmmm....s','....ffff.......s','...f7777f.....ss','...ffffff....sS.','..bbbbbbbb..sS..','.bBbbbbbbBbsS...','.bBBbCCbBBb.....','..bBCCCCBb......','...bCCCCb.......','...cC..Cc.......','..cc....cc......','................'],{m:'#1d3b8b',M:'#4f8cff',f:'#ffd08b',7:'#51301f',b:'#1f5fbf',B:'#8ec5ff',C:'#12396e',c:'#2a1b12',s:'#7a4f2a',S:'#ffe49a'}),
-guardHero:pixelTexture(['................','.....ssss.......','....sSSSSs......','...sS0SS0Ss.....','....SffffS......','...ffffff.......','..aAAAAAAa......','.aAAcccAAa..l...','.aAAcccAAa.ll...','..aAAAAAAall....','...aAaaAa.......','...dd..dd.......','..dd....dd......','................','................','................'],{s:'#7f8794',S:'#cbd5e1',0:'#111827',f:'#ffd08b',a:'#374151',A:'#94a3b8',c:'#1e3a8a',d:'#2a1b12',l:'#e5e7eb'}),
+guardHero:pixelTexture(['................','.....ssss.......','....sSSSSs......','...sS0SS0Ss.....','....SffffS......','...ffffff.......','..aAAAAAAa......','.aAAcccAAa..l...','.aAAcccAAa.ll...','..aAAAAAAall....','...aAaaAa.......','...kk..kk.......','..kk....kk......','................','................','................'],{s:'#7f8794',S:'#cbd5e1',0:'#111827',f:'#ffd08b',a:'#374151',A:'#94a3b8',c:'#1e3a8a',k:'#050507',l:'#e5e7eb'}),
 archerHero:pixelTexture(['................','....bbbb........','...bBBBBb.......','..bBffffBb......','...f7777f.......','...ffffff...w...','..gGGGGg...w.w..','.gGgggGg..w...w.','.gGgggGg...w.w..','..gGGGGg....w...','...dddd.........','...d..d.........','..dd..dd........','................','................','................'],{b:'#5b381c',B:'#a16207',f:'#ffd08b',7:'#51301f',g:'#365314',G:'#84cc16',d:'#2a1b12',w:'#b45309'}),
 bat:pixelTexture(['........','5..55..5','55e55e55','.55dd55.','..5dd5..','.55..55.','55....55','........'],{5:'#6b477b',d:'#25172f',e:'#ff8484'}),
 slime:pixelTexture(['........','..333...','.3aaa3..','3a9a9a3.','3aaaaa3.','.33333..','........','........'],{3:'#356b62',a:'#78d7bb',9:'#15342f'}),
@@ -196,12 +196,12 @@ function shoot(){
   state.lastShot=state.time;
   const base=Math.atan2(mouse.world.z-player.z,mouse.world.x-player.x);
   if(player.class==='guard'){
-    const slash=plane(.95,.16,0xe5e7eb,.95);
+    const slash=plane(1.35,.18,0xe5e7eb,.95);
     const a=base;
-    slash.position.set(player.x+Math.cos(a)*.82,.32,player.z+Math.sin(a)*.82);
+    slash.position.set(player.x+Math.cos(a)*1.18,.32,player.z+Math.sin(a)*1.18);
     slash.rotation.z=-a;
     entityGroup.add(slash);
-    state.spells.push({mesh:slash,life:.22,scale:1,kind:'slash',angle:a,r:.92,dmg:player.damage*1.25,hit:new Set()});
+    state.spells.push({mesh:slash,life:.42,scale:1,kind:'slash',angle:a,r:1.35,dmg:player.damage*1.05,hit:new Set()});
     return;
   }
   if(player.class==='archer'){
@@ -294,7 +294,20 @@ function update(dt){
   cleanupDead();
   for(let i=state.drops.length-1;i>=0;i--){const d=state.drops[i],dx=player.x-d.x,dz=player.z-d.z,dist=Math.hypot(dx,dz)||1;if(dist<player.magnet){d.x+=dx/dist*(7+player.magnet)*dt;d.z+=dz/dist*(7+player.magnet)*dt}d.mesh.position.set(d.x,.3,d.z);if(dist<.65){if(d.kind==='xp')gainXp(d.amount);if(d.kind==='coin')player.money+=d.amount;if(d.kind==='heart')player.hp=Math.min(player.maxHp,player.hp+d.amount);entityGroup.remove(d.mesh);state.drops.splice(i,1)}}
   for(let i=state.particles.length-1;i>=0;i--){const p=state.particles[i];p.life-=dt;p.x+=p.vx*dt;p.z+=p.vz*dt;p.mesh.position.set(p.x,.12,p.z);p.mesh.material.opacity=Math.max(0,p.life*2);if(p.life<=0){entityGroup.remove(p.mesh);state.particles.splice(i,1)}}
-  for(let i=state.spells.length-1;i>=0;i--){const s=state.spells[i];s.life-=dt;if(s.scale!==1){s.scale+=dt*2.4;s.mesh.scale.setScalar(s.scale);if(s.extra)s.extra.scale.setScalar(s.scale*.75)}if(s.kind==='poison')for(const e of state.enemies)if(Math.hypot(e.x-s.x,e.z-s.z)<s.r)e.hp-=s.dps*dt;if(s.kind==='slash'){s.angle+=dt*8.5;const sx=player.x+Math.cos(s.angle)*s.r,sz=player.z+Math.sin(s.angle)*s.r;s.mesh.position.set(sx,.32,sz);s.mesh.rotation.z=-s.angle;for(const e of state.enemies){if(!s.hit.has(e)&&Math.hypot(e.x-sx,e.z-sz)<e.size*.45+.38){e.hp-=s.dmg;s.hit.add(e);burst(e.x,e.z,0xe5e7eb,5)}}}if(s.kind==='mine'&&nearestEnemy(s.x,s.z,s.r*.75)){explode(s.x,s.z,s.r,s.dmg);entityGroup.remove(s.mesh);if(s.extra)entityGroup.remove(s.extra);state.spells.splice(i,1);continue}s.mesh.material.opacity=Math.max(0,Math.min(.55,s.life*1.2));if(s.extra)s.extra.material.opacity=Math.max(0,Math.min(.28,s.life*.9));if(s.life<=0){entityGroup.remove(s.mesh);if(s.extra)entityGroup.remove(s.extra);state.spells.splice(i,1)}}
+  for(let i=state.spells.length-1;i>=0;i--){const s=state.spells[i];s.life-=dt;if(s.scale!==1){s.scale+=dt*2.4;s.mesh.scale.setScalar(s.scale);if(s.extra)s.extra.scale.setScalar(s.scale*.75)}if(s.kind==='poison')for(const e of state.enemies)if(Math.hypot(e.x-s.x,e.z-s.z)<s.r)e.hp-=s.dps*dt;if(s.kind==='slash'){
+      s.angle+=dt*15;
+      const sx=player.x+Math.cos(s.angle)*s.r,sz=player.z+Math.sin(s.angle)*s.r;
+      s.mesh.position.set(sx,.32,sz);
+      s.mesh.rotation.z=-s.angle;
+      for(const e of state.enemies){
+        const d=Math.hypot(e.x-player.x,e.z-player.z);
+        if(!s.hit.has(e)&&d<s.r+e.size*.55){
+          e.hp-=s.dmg;
+          s.hit.add(e);
+          burst(e.x,e.z,0xe5e7eb,5);
+        }
+      }
+    }if(s.kind==='mine'&&nearestEnemy(s.x,s.z,s.r*.75)){explode(s.x,s.z,s.r,s.dmg);entityGroup.remove(s.mesh);if(s.extra)entityGroup.remove(s.extra);state.spells.splice(i,1);continue}s.mesh.material.opacity=Math.max(0,Math.min(.55,s.life*1.2));if(s.extra)s.extra.material.opacity=Math.max(0,Math.min(.28,s.life*.9));if(s.life<=0){entityGroup.remove(s.mesh);if(s.extra)entityGroup.remove(s.extra);state.spells.splice(i,1)}}
   cleanupDead();updateUi();
 }
 function gameOver(){clearControls();state.running=false;if(!state.paidRun){meta.gold+=player.money;state.paidRun=true}ui.finalStats.innerHTML=`Level ${player.level}, wave ${state.wave}, ${state.kills} monsters defeated, $${player.money} collected.<br>Merchant coins: $${meta.gold}`;renderShop();ui.gameOverModal.classList.remove('hidden')}
