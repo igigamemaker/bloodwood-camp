@@ -1,0 +1,80 @@
+{
+  "name": "bloodwood-camp",
+  "productName": "Bloodwood Camp",
+  "version": "1.0.0",
+  "description": "Bloodwood Camp roguelike game packaged as a desktop app for Windows and macOS.",
+  "main": "main.js",
+  "author": "igigamemaker",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win nsis",
+    "build:mac": "electron-builder --mac dmg",
+    "build:publish": "electron-builder --win nsis --mac dmg --publish always"
+  },
+  "devDependencies": {
+    "electron": "^31.7.7",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.igigamemaker.bloodwoodcamp",
+    "productName": "Bloodwood Camp",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "index.html",
+      "main.js",
+      "assets/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "Bloodwood-Camp-Setup-Windows.${ext}"
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "category": "public.app-category.games",
+      "artifactName": "Bloodwood-Camp-macOS.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Bloodwood Camp"
+    },
+    "artifactName": "Bloodwood-Camp-${os}.${ext}",
+    "dmg": {
+      "title": "Bloodwood Camp",
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    }
+  }
+}
