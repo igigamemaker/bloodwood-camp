@@ -68,3 +68,4 @@ Po wrzuceniu projektu na GitHuba możesz wejść w zakładkę **Actions** i uruc
 ## Ważne dla macOS
 
 Jeśli aplikacja nie jest podpisana certyfikatem Apple, macOS może ostrzec użytkownika. Wtedy gracz może kliknąć aplikację prawym przyciskiem i wybrać **Otwórz**.
+ 
