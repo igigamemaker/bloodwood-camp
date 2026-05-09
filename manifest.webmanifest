@@ -1,0 +1,25 @@
+{
+  "name": "Bloodwood Camp",
+  "short_name": "Bloodwood",
+  "description": "Pixel art roguelike survival game",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#120b18",
+  "theme_color": "#120b18",
+  "icons": [
+    {
+      "src": "assets/image_09.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/image_09.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
