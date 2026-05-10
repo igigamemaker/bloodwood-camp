@@ -1,4 +1,4 @@
-# Bloodwood Camp — PWA
+# Bloodwood Camp — PWA 
 
 Ta wersja działa jako Progressive Web App.
 
